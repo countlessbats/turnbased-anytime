@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo.
-echo Uninstalling Turnbased Anytime...
+echo Uninstalling Toggle Turn-Based In Combat...
 echo.
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0install.ps1" -Uninstall
 echo.

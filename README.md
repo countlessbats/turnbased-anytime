@@ -1,4 +1,4 @@
-# Turnbased Anytime
+# Toggle Turn-Based In Combat
 
 A Pillars of Eternity 1 mod that lets you switch between **real-time-with-pause** and
 **turn-based ("Tactical") combat** at runtime, from a keybind — **including mid-combat, both
@@ -6,7 +6,7 @@ directions.**
 
 The base game ships both combat modes, but locks the choice in the options menu: the checkbox
 greys out once you're in a session or in a fight. That lock is UI-only — the underlying mode is a
-single live setting, so Turnbased Anytime just flips it whenever you want.
+single live setting, so this mod just flips it whenever you want.
 
 ## What works
 
@@ -22,9 +22,8 @@ turn queue and real-time resumes. Your chosen mode saves with your game.
 
 ## The keybind is the game's own (default: `T`)
 
-Turnbased Anytime doesn't add its own hotkey UI. Pillars already ships a first-class control for
-this — Obsidian wired it up but left it dormant, with nothing polling it. This mod simply consumes
-it, so:
+This mod doesn't add its own hotkey UI. Pillars already ships a first-class control for this —
+Obsidian wired it up but left it dormant, with nothing polling it. This mod simply consumes it, so:
 
 - **Default key is `T`** (the game's own default). Rebind it in **Options → Controls** (the
   camera/turn group, near *Pass Turn* / *Wait Turn*) like any other control — with real conflict
@@ -37,17 +36,12 @@ it, so:
 
 1. Close Pillars of Eternity.
 2. Download the release zip and extract it anywhere.
-3. Double-click **install.bat**. It auto-detects your Steam install; if it can't, paste the game
-   folder when asked — quotes are optional and paths with spaces or parentheses are fine
+3. Double-click **install.bat**. It auto-detects your install; if it can't find one, it asks you to
+   paste the game folder — quotes are optional, and paths with spaces or parentheses are fine
    (e.g. `C:\Program Files (x86)\Steam\steamapps\common\Pillars of Eternity`).
 4. Launch the game and press `T` in combat.
 
 Needs only Windows PowerShell (built into Windows) — no .NET SDK or compiler.
-
-> **Upgrading from Tactical Toggle (v1.0.0)?** This release renamed the sidecar identity from
-> `LoomTurnBasedToggle` to `LoomTurnbasedAnytime`. Uninstall the old version first (run the old
-> `uninstall.bat`, or delete `LoomTurnBasedToggle.dll` from the Managed folder) before installing
-> this one. The two hooks won't collide, but you don't want the stale DLL lying around.
 
 ## Uninstall
 
@@ -58,17 +52,17 @@ this mod's hook and DLL — any other mods that patch the same method are left i
 
 - Sidecar DLL; **no game data files are edited**. No Harmony or other runtime dependencies — the
   only bundled file is Mono.Cecil (used once, by the installer, to inject the hook).
-- Internal assembly name is `LoomTurnbasedAnytime.dll` (the identifier the installer injects into
-  `GameState.Update()`). Coexists with other mods that hook the same method.
+- Internal assembly name is `LoomToggleTurnBasedInCombat.dll` (the identifier the installer injects
+  into `GameState.Update()`). Coexists with other mods that hook the same method.
 - A one-time backup of `Assembly-CSharp.dll` is made next to it.
 - Steam "Verify integrity of game files" will revert the hook (it restores `Assembly-CSharp.dll`);
   just re-run the installer if that happens.
 
 ## Build from source
 
-`./build.ps1 -GameDir "<Pillars of Eternity folder>"` compiles `src/TurnbasedAnytime.cs` into
-`LoomTurnbasedAnytime.dll` against the game's assemblies. `patch-hook.ps1` is the developer hook
-injector (the release installer does the same thing for end users).
+`./build.ps1 -GameDir "<Pillars of Eternity folder>"` compiles `src/ToggleTurnBasedInCombat.cs` into
+`LoomToggleTurnBasedInCombat.dll` against the game's assemblies. `patch-hook.ps1` is the developer
+hook injector (the release installer does the same thing for end users).
 
 ## License
 

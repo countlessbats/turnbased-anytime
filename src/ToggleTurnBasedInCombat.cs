@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace LoomTurnbasedAnytime
+[assembly: AssemblyTitle("Toggle Turn-Based In Combat")]
+[assembly: AssemblyProduct("Toggle Turn-Based In Combat")]
+[assembly: AssemblyVersion("1.1.1.0")]
+[assembly: AssemblyFileVersion("1.1.1.0")]
+
+namespace LoomToggleTurnBasedInCombat
 {
     // Sidecar entry point. Assembly-CSharp is patched to call Bootstrap.Tick() at the top of
     // GameState.Update(); on first tick we spawn a persistent MonoBehaviour that does the work.
@@ -20,13 +26,13 @@ namespace LoomTurnbasedAnytime
 
             try
             {
-                GameObject go = new GameObject("LoomTurnbasedAnytime");
+                GameObject go = new GameObject("LoomToggleTurnBasedInCombat");
                 UnityEngine.Object.DontDestroyOnLoad(go);
                 go.AddComponent<Toggler>();
             }
             catch (Exception ex)
             {
-                Debug.LogError("[LoomTurnbasedAnytime] spawn failed: " + ex);
+                Debug.LogError("[LoomToggleTurnBasedInCombat] spawn failed: " + ex);
             }
             finally
             {
@@ -36,7 +42,7 @@ namespace LoomTurnbasedAnytime
     }
 
     // Makes Pillars' turn-based ("Tactical") mode fully combat-friendly:
-    //   1) The native TACTICAL_TOGGLE keybind (Options -> Controls, defaulted to \) flips the mode
+    //   1) The native TACTICAL_TOGGLE keybind (Options -> Controls, vanilla default T) flips the mode
     //      any time, including mid-combat. The engine's own AI loop enrolls/tears down combatants.
     //   2) The vanilla center-bottom HUD toggle button (which normally hides in combat) is kept
     //      visible and clickable in combat.
@@ -94,7 +100,7 @@ namespace LoomTurnbasedAnytime
             }
             catch (Exception ex)
             {
-                Debug.LogError("[LoomTurnbasedAnytime] RevertForcedDefault failed: " + ex);
+                Debug.LogError("[LoomToggleTurnBasedInCombat] RevertForcedDefault failed: " + ex);
             }
         }
 
@@ -117,7 +123,7 @@ namespace LoomTurnbasedAnytime
             }
             catch (Exception ex)
             {
-                Debug.LogError("[LoomTurnbasedAnytime] update failed: " + ex);
+                Debug.LogError("[LoomToggleTurnBasedInCombat] update failed: " + ex);
             }
         }
 
@@ -250,7 +256,7 @@ namespace LoomTurnbasedAnytime
                     {
                         m_loggedButton = true;
                         StringBuilder sb = new StringBuilder();
-                        sb.Append("[LoomTurnbasedAnytime] tactical button = ").Append(PathOf(m_button.transform));
+                        sb.Append("[LoomToggleTurnBasedInCombat] tactical button = ").Append(PathOf(m_button.transform));
                         sb.Append(" | hiders(").Append(m_hiders.Count).Append("):");
                         foreach (UIVisibleInCombat v in m_hiders)
                         {
@@ -264,7 +270,7 @@ namespace LoomTurnbasedAnytime
             }
             catch (Exception ex)
             {
-                Debug.LogError("[LoomTurnbasedAnytime] FindButton failed: " + ex);
+                Debug.LogError("[LoomToggleTurnBasedInCombat] FindButton failed: " + ex);
             }
         }
 

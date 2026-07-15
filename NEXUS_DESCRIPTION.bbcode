@@ -1,8 +1,8 @@
-[size=5][b]Turnbased Anytime[/b][/size]
+[size=5][b]Toggle Turn-Based In Combat[/b][/size]
 
 A Pillars of Eternity 1 mod that lets you switch between [b]real-time-with-pause[/b] and [b]turn-based ("Tactical") combat[/b] at runtime, from a keybind — [b]including mid-combat, both directions.[/b]
 
-The base game ships both combat modes, but locks the choice in the options menu: the checkbox greys out once you're in a session or in a fight. That lock is UI-only — the underlying mode is a single live setting, so Turnbased Anytime just flips it whenever you want.
+The base game ships both combat modes, but locks the choice in the options menu: the checkbox greys out once you're in a session or in a fight. That lock is UI-only — the underlying mode is a single live setting, so this mod just flips it whenever you want.
 
 [size=4][b]What works[/b][/size]
 [list]
@@ -10,37 +10,40 @@ The base game ships both combat modes, but locks the choice in the options menu:
 [*][b]real-time → turn-based[/b] — out of combat.
 [*][b]real-time → turn-based, mid-combat[/b] — the current fighters enroll into the turn order the next frame.
 [/list]
+
 Turning turn-based on mid-fight rides the game's own combat loop: every combatant self-enrolls into the turn system exactly as if the fight had started that way. Turning it back off clears the turn queue and real-time resumes. Your chosen mode saves with your game.
 
 [size=4][b]The keybind is the game's own (default: T)[/b][/size]
-Turnbased Anytime doesn't add its own hotkey UI. Pillars already ships a first-class control for this — Obsidian wired it up but left it dormant, with nothing polling it. This mod simply consumes it, so:
+
+This mod doesn't add its own hotkey UI. Pillars already ships a first-class control for this — Obsidian wired it up but left it dormant, with nothing polling it. This mod simply consumes it, so:
 [list]
-[*][b]Default key is T[/b] (the game's own default). Rebind it in [b]Options → Controls[/b] (the camera/turn group, near Pass Turn / Wait Turn) like any other control — with real conflict detection and persistence.
+[*][b]Default key is T[/b] (the game's own default). Rebind it in [b]Options → Controls[/b] (the camera/turn group, near [i]Pass Turn[/i] / [i]Wait Turn[/i]) like any other control — with real conflict detection and persistence.
 [*]It works everywhere, [b]including in combat[/b].
-[*]The little center-bottom HUD toggle button (which normally fades out during a fight) is kept visible and clickable too, found by function rather than fragile name-matching.
+[*]The center-bottom HUD toggle button (which normally fades out during a fight) is kept visible and clickable too.
 [/list]
 
 [size=4][b]Install[/b][/size]
 [list=1]
 [*]Close Pillars of Eternity.
-[*]Download the release zip and extract it anywhere.
-[*]Double-click [b]install.bat[/b]. It auto-detects your Steam install; if it can't, paste the game folder when asked — quotes are optional and paths with spaces or parentheses are fine.
-[*]Launch the game and press T in combat.
+[*]Download the zip and extract it anywhere.
+[*]Double-click [b]install.bat[/b]. It auto-detects your install; if it can't find one, it asks you to paste the game folder — quotes are optional, and paths with spaces or parentheses are fine.
+[*]Launch the game and press [b]T[/b] in combat.
 [/list]
+
 Needs only Windows PowerShell (built into Windows) — no .NET SDK or compiler.
 
-[b]Upgrading from Tactical Toggle (v1.0.0)?[/b] This release renamed the sidecar identity from LoomTurnBasedToggle to LoomTurnbasedAnytime. Uninstall the old version first (run the old uninstall.bat, or delete LoomTurnBasedToggle.dll from the Managed folder) before installing this one. The two hooks won't collide, but you don't want the stale DLL lying around.
-
 [size=4][b]Uninstall[/b][/size]
-Double-click [b]uninstall.bat[/b] (or run install.ps1 -Uninstall). It surgically removes [b]only[/b] this mod's hook and DLL — any other mods that patch the same method are left intact.
+
+Double-click [b]uninstall.bat[/b]. It surgically removes [b]only[/b] this mod's hook and DLL — any other mods that patch the same method are left intact.
 
 [size=4][b]Notes[/b][/size]
 [list]
-[*]Sidecar DLL; [b]no game data files are edited[/b]. No Harmony or other runtime dependencies — the only bundled file is Mono.Cecil (used once, by the installer, to inject the hook).
-[*]Internal assembly name is LoomTurnbasedAnytime.dll. Coexists with other mods that hook the same method.
+[*]Sidecar DLL; [b]no game data files are edited[/b]. No Harmony or other runtime dependencies — the only bundled file is Mono.Cecil, used once by the installer to inject the hook.
 [*]A one-time backup of Assembly-CSharp.dll is made next to it.
 [*]Steam "Verify integrity of game files" will revert the hook; just re-run the installer if that happens.
+[*]Coexists with other mods that hook the same method.
 [/list]
 
-[size=4][b]License[/b][/size]
-MIT. Contains only original mod code; no Obsidian game assets.
+[size=4][b]Source[/b][/size]
+
+MIT licensed. Contains only original mod code; no Obsidian game assets.

@@ -1,5 +1,5 @@
-# Injects LoomTurnbasedAnytime.Bootstrap.Tick() at the top of GameState.Update() in Assembly-CSharp.dll.
-# Idempotent: skips if the LoomTurnbasedAnytime assembly reference is already present.
+# Injects LoomToggleTurnBasedInCombat.Bootstrap.Tick() at the top of GameState.Update() in Assembly-CSharp.dll.
+# Idempotent: skips if the LoomToggleTurnBasedInCombat assembly reference is already present.
 # Coexists with other Loom mods that hook GameState.Update (each checks its own reference).
 # Usage: ./patch-hook.ps1 [-GameDir "<install folder>"]   (game must be closed)
 [CmdletBinding()]
@@ -12,7 +12,7 @@ $ErrorActionPreference = 'Stop'
 
 $managed = Join-Path $GameDir 'PillarsOfEternity_Data\Managed'
 $asmPath = Join-Path $managed 'Assembly-CSharp.dll'
-$sidecar = Join-Path $managed 'LoomTurnbasedAnytime.dll'
+$sidecar = Join-Path $managed 'LoomToggleTurnBasedInCombat.dll'
 
 # Mono.Cecil: prefer a copy next to this script (drop one here), else search the ilspycmd
 # dotnet-tool store under the current user profile. (End users don't run this - the release
@@ -50,8 +50,8 @@ $rp.AssemblyResolver = $resolver
 
 $module = [Mono.Cecil.ModuleDefinition]::ReadModule($asmPath, $rp)
 try {
-    if ($module.AssemblyReferences | Where-Object { $_.Name -eq 'LoomTurnbasedAnytime' }) {
-        Write-Host "Already patched (LoomTurnbasedAnytime reference present). Nothing to do." -ForegroundColor Yellow
+    if ($module.AssemblyReferences | Where-Object { $_.Name -eq 'LoomToggleTurnBasedInCombat' }) {
+        Write-Host "Already patched (LoomToggleTurnBasedInCombat reference present). Nothing to do." -ForegroundColor Yellow
         return
     }
 
@@ -64,8 +64,8 @@ try {
     if (-not $update) { throw "Could not find GameState.Update()." }
 
     $sc        = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($sidecar)
-    $bootstrap = $sc.MainModule.Types | Where-Object { $_.FullName -eq 'LoomTurnbasedAnytime.Bootstrap' } | Select-Object -First 1
-    if (-not $bootstrap) { throw "LoomTurnbasedAnytime.Bootstrap not found in sidecar." }
+    $bootstrap = $sc.MainModule.Types | Where-Object { $_.FullName -eq 'LoomToggleTurnBasedInCombat.Bootstrap' } | Select-Object -First 1
+    if (-not $bootstrap) { throw "LoomToggleTurnBasedInCombat.Bootstrap not found in sidecar." }
     $tick = $bootstrap.Methods | Where-Object { $_.Name -eq 'Tick' -and $_.IsStatic -and -not $_.HasParameters } | Select-Object -First 1
     if (-not $tick) { throw "Bootstrap.Tick() not found in sidecar." }
 
@@ -75,20 +75,20 @@ try {
     $call  = $il.Create([Mono.Cecil.Cil.OpCodes]::Call, $importedTick)
     $il.InsertBefore($first, $call)
 
-    $anr = New-Object Mono.Cecil.AssemblyNameReference('LoomTurnbasedAnytime', $sc.Name.Version)
+    $anr = New-Object Mono.Cecil.AssemblyNameReference('LoomToggleTurnBasedInCombat', $sc.Name.Version)
     $module.AssemblyReferences.Add($anr)
 
-    $backup = "$asmPath.pre-tbanytime-backup"
+    $backup = "$asmPath.toggleturnbased-backup"
     if (-not (Test-Path $backup)) { Copy-Item -LiteralPath $asmPath -Destination $backup -Force }
 
-    $tmp = "$asmPath.tbanytime-patched"
+    $tmp = "$asmPath.toggleturnbased-patched"
     if (Test-Path $tmp) { Remove-Item -LiteralPath $tmp -Force }
     $module.Write($tmp)
     $module.Dispose()
 
     Copy-Item -LiteralPath $tmp -Destination $asmPath -Force
     Remove-Item -LiteralPath $tmp -Force
-    Write-Host "Patched GameState.Update -> LoomTurnbasedAnytime.Bootstrap.Tick()" -ForegroundColor Green
+    Write-Host "Patched GameState.Update -> LoomToggleTurnBasedInCombat.Bootstrap.Tick()" -ForegroundColor Green
     Write-Host "Backup saved: $backup" -ForegroundColor DarkGray
 }
 finally {
