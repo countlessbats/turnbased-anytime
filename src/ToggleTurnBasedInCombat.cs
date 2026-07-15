@@ -6,8 +6,8 @@ using UnityEngine;
 
 [assembly: AssemblyTitle("Toggle Turn-Based In Combat")]
 [assembly: AssemblyProduct("Toggle Turn-Based In Combat")]
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.1.2.0")]
+[assembly: AssemblyFileVersion("1.1.2.0")]
 
 namespace LoomToggleTurnBasedInCombat
 {
@@ -47,15 +47,18 @@ namespace LoomToggleTurnBasedInCombat
     //   2) The vanilla center-bottom HUD toggle button (which normally hides in combat) is kept
     //      visible and clickable in combat.
     //
+    // KEYBIND CONTRACT: this mod never writes a binding. It only READS the player's bound
+    // TACTICAL_TOGGLE control, so whatever they set in Options -> Controls is what works. The one
+    // thing it disables is the HUD button's own UIButtonKeyBinding, whose keyCode is hardcoded on
+    // the prefab and therefore ignores that binding: leaving it on would both double-fire the
+    // default key and keep a stale key live after a rebind. The button itself stays fully
+    // clickable - UIButtonKeyBinding is a keyboard-only shim and has no part in mouse input.
+    //
     // The button is found by FUNCTION, not name: it's the GameObject whose UIOptionsSetter targets
     // GameOption.BoolOption.TACTICAL_PSEUDO_TOGGLE. Its click handler (GameMode.SetOption) has no
     // combat guard, so once it's visible it just works.
     public class Toggler : MonoBehaviour
     {
-        // Legacy pref written by earlier builds that forced the key to Backslash. We now honour the
-        // vanilla binding, so this pref only survives to trigger a one-time revert.
-        private const string ForcedDefaultPref = "loom_tbt_default_applied";
-
         private string m_status = string.Empty;
         private float m_statusUntil;
 
@@ -71,38 +74,6 @@ namespace LoomToggleTurnBasedInCombat
         private readonly List<UIVisibleInCombat> m_hiders = new List<UIVisibleInCombat>();
         private float m_nextButtonScan;
         private bool m_loggedButton;
-
-        private void Awake()
-        {
-            RevertForcedDefaultIfNeeded();
-        }
-
-        // We no longer touch the keybind — the vanilla default (T) stands, and the player rebinds
-        // it in Options -> Controls like any other control. But if an earlier build of this mod
-        // forced Backslash into the player's saved settings, undo that once so "vanilla" really is
-        // vanilla again. (Copies the pristine default back over the live binding.)
-        private void RevertForcedDefaultIfNeeded()
-        {
-            try
-            {
-                if (PlayerPrefs.GetInt(ForcedDefaultPref, 0) != 1)
-                {
-                    return;
-                }
-
-                int idx = (int)MappedControl.TACTICAL_TOGGLE;
-                List<KeyControl> live = GameState.Controls.Controls[idx];
-                live.Clear();
-                live.AddRange(MappedInput.DefaultMapping.Controls[idx]); // pristine vanilla (T)
-                GameState.Controls.SaveToPrefs();
-
-                PlayerPrefs.DeleteKey(ForcedDefaultPref);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("[LoomToggleTurnBasedInCombat] RevertForcedDefault failed: " + ex);
-            }
-        }
 
         private void Update()
         {

@@ -1,0 +1,33 @@
+[size=4][b]Requirements[/b][/size]
+
+None. Windows PowerShell is built into Windows, and that is all the installer needs — no .NET SDK, no compiler, no Harmony, no script extender, no other mods.
+
+[size=4][b]Install[/b][/size]
+
+[list=1]
+[*]Close Pillars of Eternity.
+[*]Download the zip and extract it anywhere (your Downloads folder is fine — don't extract it into the game folder).
+[*]Double-click [b]install.bat[/b].
+[*]It finds your game on its own. If it can't, it will ask you to paste the folder that contains [b]PillarsOfEternity.exe[/b]. Quotes are optional, and paths with spaces or parentheses are fine — for example: [i]C:\Program Files (x86)\Steam\steamapps\common\Pillars of Eternity[/i]
+[*]Launch the game and press [b]T[/b] to switch between real-time and turn-based — in or out of combat.
+[/list]
+
+Steam, GOG, and Epic installs are all detected, on any drive.
+
+[size=4][b]Changing the key[/b][/size]
+
+[b]T[/b] is the game's own default for this control, not something the mod invents. Rebind it in [b]Options → Controls[/b], in the camera/turn group near [i]Pass Turn[/i] and [i]Wait Turn[/i] — with normal conflict detection, and it sticks.
+
+[size=4][b]Uninstall[/b][/size]
+
+Double-click [b]uninstall.bat[/b]. It removes only this mod's hook and its DLL — any other mods patching the same method are left intact.
+
+[size=4][b]Notes[/b][/size]
+
+[list]
+[*]This is a sidecar DLL. [b]No game data files are edited.[/b] The installer adds one call into Assembly-CSharp.dll and copies in one DLL of its own.
+[*]A one-time backup of Assembly-CSharp.dll is saved next to it before anything is changed.
+[*]Steam's "Verify integrity of game files" restores Assembly-CSharp.dll and so removes the hook. Just run install.bat again if that happens.
+[*]Plays nicely with other mods that hook the same method.
+[*]Your chosen combat mode saves with your game.
+[/list]
