@@ -225,7 +225,30 @@ if (-not (Test-PathSafe $cecilPath)) { throw "Required file not found: $cecilPat
 $proc = Get-Process -Name 'PillarsOfEternity*' -ErrorAction SilentlyContinue
 if ($proc) { throw "Pillars of Eternity is running (pid $($proc.Id)). Close it and re-run." }
 
-Add-Type -Path $cecilPath
+# ---------------------------------------------------------------------------
+# Mark-of-the-Web. Windows tags every file extracted from an internet-downloaded
+# zip with a Zone.Identifier stream. Add-Type refuses to load a "blocked" DLL, so
+# Mono.Cecil.dll would fail with an obscure assembly-load error and the installer
+# would die for a reason the user can't guess. Clear the tag off our own extracted
+# files first -- this is exactly the manual right-click -> Properties -> Unblock
+# step, done for them. Unblock-File is a no-op on files that carry no zone info.
+# ---------------------------------------------------------------------------
+try { Get-ChildItem -LiteralPath $here -File -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue } catch { }
+
+try {
+    Add-Type -Path $cecilPath
+}
+catch {
+    # Auto-unblock didn't take (locked-down policy, odd ACLs, network path...). Say
+    # exactly what to do rather than surfacing a raw assembly-load exception.
+    Write-Host ""
+    Write-Host "Windows is blocking the bundled Mono.Cecil.dll because it came from a downloaded zip." -ForegroundColor Yellow
+    Write-Host "Fix it in two clicks, then re-run this installer:" -ForegroundColor Yellow
+    Write-Host "  1. Right-click: $cecilPath" -ForegroundColor DarkGray
+    Write-Host "  2. Properties -> at the bottom, tick 'Unblock' -> OK" -ForegroundColor DarkGray
+    Write-Host ""
+    throw "Could not load Mono.Cecil.dll (blocked by Windows). Unblock it as above and re-run. Nothing was changed."
+}
 $resolver = New-Object Mono.Cecil.DefaultAssemblyResolver
 $resolver.AddSearchDirectory($managed)
 $rp = New-Object Mono.Cecil.ReaderParameters
